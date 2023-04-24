@@ -9,4 +9,4 @@
 ##### "Truncation was not explicitly activated but `max_length` is provided a specific value, please use `truncation=True` to explicitly truncate examples to max length. Defaulting to 'longest_first' truncation strategy. If you encode pairs of sequences (GLUE-style) with the tokenizer you can select this strategy more precisely by providing a specific strategy to `truncation`." <br>
 grammar.py 관련 문제 : 검토+저장하기를 클릭했을 때, 문장이 모두 문법 검사된 상태로 배출되지 않고, 50%는 생략되서 나오는 문제가 발생. <br>
 max_length, truncation 문제로 추측 진행. <br>
-현시점까지 오류를 해결하지 못해서 공유.(채원)
+현시점까지 오류를 해결하지 못해서 공유.(채원) (해결함)
