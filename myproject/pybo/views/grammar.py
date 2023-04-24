@@ -36,27 +36,42 @@ def generate_tags(sentence):
     return tags
 
 def split_sentence(input):
-    inputs = input.split('.')
+    inputs = input.split(".")
     linputs = len(inputs)
     x = 0
     split_input = []
-    while x < (linputs//4):
-      if len(inputs) > 4:
-        S_sentence=' '.join(inputs[0:4])
-        del inputs[0:4]
-        split_input.append(S_sentence)
-      else:
-         S_sentence=' '.join(inputs[0:-1])
-         split_input.append(S_sentence)
-      x = x+1
-    return split_input
+    if linputs in [1,2,3]:
+        return inputs
+    else:
+        while x < (linputs//4):
+            if len(inputs) > 4:
+                S_sentence = ' '.join(inputs[0:4])
+                del inputs[0:4]
+                split_input.append(S_sentence)
+            else:
+                S_sentence = ' '.join(inputs[0:-1])
+                split_input.append(S_sentence)
+            x = x+1
+        return split_input
+
+    # 두 문장 이하로 작성될 경우, 문장 인식을 못해서 수정
+    # while x < (linputs//4):
+    #   if len(inputs) > 4:
+    #     S_sentence=' '.join(inputs[0:4])
+    #     del inputs[0:4]
+    #     split_input.append(S_sentence)
+    #   else:
+    #      S_sentence=' '.join(inputs[0:-1])
+    #      split_input.append(S_sentence)
+    #   x = x+1
+    # return split_input
 
 def call_models(list):
   correct_sentence = []
   for i in list:
     C_sentence = correct_grammar(i)
-    correct_sentence= "".join(C_sentence)
-  return correct_sentence
+    correct_sentence.append(C_sentence+" ")
+  return "".join(correct_sentence)
 
 # Define the function to handle the form submission
 @grammar.route('/correct_grammar', methods=['POST', 'GET'])
@@ -81,15 +96,17 @@ def correct_grammar_api():
         start_time = time.time() # correction_grammar 시작시간 저장
         sentence = request.form['sentence']
         # 문장 분리를 위해 추가함
-        sentence2 = split_sentence(sentence)
-        corrected_sentence = call_models(sentence2)
+
+        sentence_splited = split_sentence(sentence)
+        # 한 문장 이하의 일기는 문법 체크 자체를 못하는 관계로 수정함
+        corrected_sentence = call_models(sentence_splited)
 
         # corrected_sentence = correct_grammar(sentence) # 문장 분리하기 전 코드
         end_time = time.time() # correction_grammar 종료 시간 저장
         execution_time = end_time - start_time # correction_grammar 실행시간 계산
 
         start_time2 = time.time() # generate_tags 시작시간 저장
-        tags = generate_tags(sentence)
+        tags = generate_tags(corrected_sentence)
         tags = tags[:3]
         new_tags = ",".join(tags)
         end_time2 = time.time()  # generate_tags 종료시간 저장
@@ -97,7 +114,7 @@ def correct_grammar_api():
 
         start_time3 = time.time() # db.session 시작시간 저장
         form = DiaryForm()
-        # corrected_sentence = corrected_sentence1 + corrected_sentence2
+
         diary = Diary(subject=form.subject.data, content=str(corrected_sentence),
                       create_date=datetime.now(), user=g.user, tags=new_tags)
         db.session.add(diary)
@@ -106,7 +123,7 @@ def correct_grammar_api():
         execution_time3 = end_time3 - start_time3 # 데이터베이스 저장시간 계산
 
         return render_template('diary/diary_form.html', execution_time = execution_time, execution_time2 = execution_time2,
-                               execution_time3 = execution_time3, sentence=sentence, corrected_sentence=str(corrected_sentence), tags=new_tags)
+                               execution_time3 = execution_time3, sentence=sentence, corrected_sentence=corrected_sentence, tags=new_tags)
     # elif 'save' in request.form:
     #     form = DiaryForm()
     #     sentence = request.form.get('sentence')
@@ -133,12 +150,6 @@ from pybo.models import Sentence
 
 
 engine = create_engine('sqlite:///sentences.db', echo=True)
-
-# def correct_grammar(sentence):
-#     inputs = tokenizer.encode(sentence, return_tensors="pt")
-#     outputs = model.generate(inputs, max_length=1024, do_sample=True, top_k=50, top_p=0.95, num_return_sequences=3, num_beams=5, early_stopping=True)
-#     corrected_sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
-#     return corrected_sentence
 
 Session = sessionmaker(bind=engine)
 
