@@ -9,6 +9,19 @@
 <!--카드 형태-->
 <!-- Card with an image on bottom -->
   <div class="diary-list">
+<!--최신순/오래된순/좋아요순/인기순으로 정렬-->
+  <div class="container my-3">
+    <div class="row justify-content-between my-3">
+      <div class="col-2">
+        <select class="form-control so">
+          <option value="recent" {% if so=='recent' %}selected{% endif %}>최신순</option>
+          <option value="old" {% if so=='old' %}selected{% endif %}>오래된 순</option>
+          <option value="recommend" {% if so=='recommend' %}selected{% endif %}>좋아요 순</option>
+          <option value="popular" {% if so=='popular' %}selected{% endif %}>인기순</option>
+        </select>
+      </div>
+    </div>
+  </div>
     {% if diary_list %}
     {% for diary in diary_list.items %}
     <a href="{{ url_for('diary.detail', diary_id=diary.id) }}">
@@ -102,6 +115,7 @@
   <form id="searchForm" method="get" action="{{ url_for('diary._list') }}">
     <input type="hidden" id="kw" name="kw" value="{{ kw or '' }}">
     <input type="hidden" id="page" name="page" value="{{ page }}">
+    <input type="hidden" id="so" name="so" value="{{ so }}">
   </form>
 
 
@@ -123,5 +137,11 @@ btn_search.addEventListener('click', function() {
   document.getElementById('page').value = 1;
   document.getElementById('searchForm').submit();
 });
+
+$(".so").on('change', function() {
+        $("#so").val($(this).val());
+        $("#page").val(1);
+        $("#searchForm").submit();
+    });
 </script>
 {% endblock %}
