@@ -2,6 +2,7 @@ from datetime import datetime
 # 블루프린트로 기능 분리 ◀ main_views.py
 from flask import Blueprint, render_template, request, url_for, g, flash
 from werkzeug.utils import redirect
+from sqlalchemy import func
 
 from pybo import db
 from pybo.models import Diary, Answer, User, diary_voter
@@ -15,7 +16,9 @@ bp = Blueprint('diary', __name__, url_prefix = '/diary')
 def _list():
     page = request.args.get('page', type=int, default = 1) # 페이지 기능
     kw = request.args.get('kw', type=str, default='') # 검색 기능
+    so = request.args.get('so', type=str, default='')
     diary_list = Diary.query.order_by(Diary.create_date.desc())
+    # diary_list_vote = Diary.query.order_by(Diary.vote_count.desc())
     if kw:
         search = '%%{}%%'.format(kw)
         sub_query = db.session.query(Answer.diary_id, Answer.content, User.username) \
@@ -31,6 +34,26 @@ def _list():
                     sub_query.c.username.ilike(search) # 댓글 쓴사람
                     ) \
             .distinct()
+        return render_template('diary/diary_list.html', diary_list=diary_list, page=page, kw=kw)
+    # 좋아요 순 정렬
+    if so == 'recommend':
+        sub_query = db.session.query(diary_voter.c.diary_id, func.count('*').label('num_voter'))\
+            .group_by(diary_voter.c.diary_id).subquery()
+        diary_list = Diary.query \
+            .outerjoin(sub_query, Diary.id == sub_query.c.diary_id) \
+            .order_by(sub_query.c.num_voter.desc(), Diary.create_date.desc())
+    # 인기순 정렬
+    elif so == 'comment':
+        sub_query = db.session.query(Answer.diary_id, func.count('*').label('num_answer')) \
+            .group_by(Answer.diary_id).subquery()
+        diary_list = Diary.query \
+            .outerjoin(sub_query, Diary.id == sub_query.c.diary_id) \
+            .order_by(sub_query.c.num_answer.desc(), Diary.create_date.desc())
+    elif so == 'old':
+        diary_list = Diary.query.order_by(Diary.create_date.asc())
+    else:
+        diary_list = Diary.query.order_by(Diary.create_date.desc())
+
     diary_list = diary_list.paginate(page=page, per_page=8)
     return render_template('diary/diary_list.html', diary_list=diary_list, page=page, kw=kw)
 
@@ -88,10 +111,16 @@ def delete(diary_id):
 def vote(diary_id):
     _diary = Diary.query.get_or_404(diary_id)
     if g.user == _diary.user:
-        _diary.voter.append(g.user)
+        _diary.voter.append(g.user )
+        if _diary.vote_count is None:
+            _diary.vote_count = 0
+        _diary.vote_count += 1
         db.session.commit()
     else:
         _diary.voter.append(g.user)
+        if _diary.vote_count is None:
+            _diary.vote_count = 0
+        _diary.vote_count += 1
         db.session.commit()
     return redirect(url_for('diary.detail', diary_id=diary_id))
 
