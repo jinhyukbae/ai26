@@ -9,15 +9,16 @@
 <!--카드 형태-->
 <!-- Card with an image on bottom -->
   <div class="diary-list">
-<!--최신순/오래된순/좋아요순/인기순으로 정렬-->
+<!--최신순/오래된순/좋아요순/댓글순으로 정렬-->
   <div class="container my-3">
     <div class="row justify-content-between my-3">
       <div class="col-2">
         <select class="form-control so">
+          <option value="">-----</option>
           <option value="recent" {% if so=='recent' %}selected{% endif %}>최신순</option>
           <option value="old" {% if so=='old' %}selected{% endif %}>오래된 순</option>
           <option value="recommend" {% if so=='recommend' %}selected{% endif %}>좋아요 순</option>
-          <option value="popular" {% if so=='popular' %}selected{% endif %}>인기순</option>
+          <option value="comment" {% if so=='comment' %}selected{% endif %}>댓글순</option>
         </select>
       </div>
     </div>
