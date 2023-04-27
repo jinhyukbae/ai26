@@ -34,6 +34,7 @@ def _list():
                     sub_query.c.username.ilike(search) # 댓글 쓴사람
                     ) \
             .distinct()
+        diary_list = diary_list.paginate(page=page, per_page=8)
         return render_template('diary/diary_list.html', diary_list=diary_list, page=page, kw=kw)
     # 좋아요 순 정렬
     if so == 'recommend':
@@ -53,7 +54,6 @@ def _list():
         diary_list = Diary.query.order_by(Diary.create_date.asc())
     else:
         diary_list = Diary.query.order_by(Diary.create_date.desc())
-
     diary_list = diary_list.paginate(page=page, per_page=8)
     return render_template('diary/diary_list.html', diary_list=diary_list, page=page, kw=kw)
 
@@ -62,6 +62,10 @@ def detail(diary_id):
     form = AnswerForm()
     diary = Diary.query.get_or_404(diary_id)
     return render_template('diary/diary_detail.html', diary=diary, form=form)
+
+@bp.route('/instruction/')
+def instruction():
+    return render_template('diary/instruction.html')
 
 # create 라우팅 함수 작성 - GET, POST을 모두 처리하고 라벨이나 입력폼 사용시 필요
 @bp.route('/create/', methods=('GET','POST'))
