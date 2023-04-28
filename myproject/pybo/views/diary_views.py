@@ -57,10 +57,35 @@ def _list():
     diary_list = diary_list.paginate(page=page, per_page=8)
     return render_template('diary/diary_list.html', diary_list=diary_list, page=page, kw=kw)
 
+# 배진혁 이음동의어 코드 수정 시작
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+# 이음동의어 모델 로드
+tokenizer3 = T5Tokenizer.from_pretrained('prithivida/parrot_paraphraser_on_T5')
+model3 = T5ForConditionalGeneration.from_pretrained('prithivida/parrot_paraphraser_on_T5')
+# 시간복잡도
+import time
+# 디테일페이지
 @bp.route('/detail/<int:diary_id>/')
 def detail(diary_id):
     form = AnswerForm()
     diary = Diary.query.get_or_404(diary_id)
+    return render_template('diary/diary_detail.html', diary=diary, form=form)
+# 이음동의어 함수
+@bp.route('/detail/<int:diary_id>', methods=('POST',))
+def get_paraphrase(diary_id):
+    form = AnswerForm()
+    diary = Diary.query.get_or_404(diary_id)
+    if 'submit' in request.form:
+        input_text = request.form['input_text']
+
+        start_time = time.time()  # parrot 시작시간 저장
+        inputs = tokenizer3.encode("paraphrase: " + input_text, return_tensors="pt")
+        outputs = model3.generate(inputs, max_length=2000, do_sample=True, num_return_sequences=2) # max_length 조정(상준이 일기로 실험시 중간에 삭제)
+        paraphrases = [tokenizer3.decode(output, skip_special_tokens=True) for output in outputs]
+        end_time = time.time()  # parrot 종료 시간 저장
+        execution_time = end_time - start_time  # parrot 실행시간 계산
+        return render_template('diary/diary_detail.html', input_text=input_text, paraphrases=paraphrases, diary=diary, form=form, execution_time=execution_time)
+
     return render_template('diary/diary_detail.html', diary=diary, form=form)
 
 @bp.route('/instruction/')
@@ -136,3 +161,7 @@ def review(diary_id):
     diary.review_set.append(review)
     db.session.commit()
     return redirect(url_for('diary.form', diary_id=diary_id))
+
+
+
+
