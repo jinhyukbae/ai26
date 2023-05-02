@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from sqlalchemy import MetaData
 import config
 from flaskext.markdown import Markdown
@@ -61,6 +62,16 @@ def create_app():
         redirect_to="google.login",
     )
     app.register_blueprint(google_bp, url_prefix="/login")
+
+    from .models import User
+    # flask-login 적용
+    login_manager = LoginManager()
+    login_manager.login_view = "auth.login"
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(id):
+        return User.query.get(id) # primary key
 
     return app
 
