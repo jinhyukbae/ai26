@@ -70,6 +70,7 @@ def detail(diary_id):
     form = AnswerForm()
     diary = Diary.query.get_or_404(diary_id)
     return render_template('diary/diary_detail.html', diary=diary, form=form)
+
 # 이음동의어 함수
 @bp.route('/detail/<int:diary_id>', methods=('POST',))
 def get_paraphrase(diary_id):
@@ -80,7 +81,7 @@ def get_paraphrase(diary_id):
 
         start_time = time.time()  # parrot 시작시간 저장
         inputs = tokenizer3.encode("paraphrase: " + input_text, return_tensors="pt")
-        outputs = model3.generate(inputs, max_length=2000, do_sample=True, num_return_sequences=2) # max_length 조정(상준이 일기로 실험시 중간에 삭제)
+        outputs = model3.generate(inputs, max_length=2048, do_sample=True, num_return_sequences=5) # max_length 조정(상준이 일기로 실험시 중간에 삭제)
         paraphrases = [tokenizer3.decode(output, skip_special_tokens=True) for output in outputs]
         end_time = time.time()  # parrot 종료 시간 저장
         execution_time = end_time - start_time  # parrot 실행시간 계산
@@ -118,7 +119,7 @@ def modify(diary_id):
             form.populate_obj(diary)
             diary.modify_date = datetime.now()  # 수정일시 저장
             db.session.commit()
-            return redirect(url_for('diary.detail', diary_id=diary_id))
+            return redirect(url_for('diary.detail', diary_id=diary_id, form=form))
     else: # GET 요청
         form = DiaryForm(obj=diary)
     return render_template('diary/diary_form_modify.html', form=form)

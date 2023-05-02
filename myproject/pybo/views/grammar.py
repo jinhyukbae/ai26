@@ -12,22 +12,23 @@ import nltk
 # 저장하면 주석처리
 # nltk.download('punkt')
 
+# 문법검사 모델 로드
+tokenizer = AutoTokenizer.from_pretrained("vennify/t5-base-grammar-correction")
+model = AutoModelForSeq2SeqLM.from_pretrained("vennify/t5-base-grammar-correction", max_length = 1024)
+# 태그 생성 모델(t5) 로드
 tokenizer2 = AutoTokenizer.from_pretrained("fabiochiu/t5-base-tag-generation")
 model2 = AutoModelForSeq2SeqLM.from_pretrained("fabiochiu/t5-base-tag-generation")
 from werkzeug.exceptions import BadRequestKeyError
 
-# Load the model
-tokenizer = AutoTokenizer.from_pretrained("vennify/t5-base-grammar-correction")
-model = AutoModelForSeq2SeqLM.from_pretrained("vennify/t5-base-grammar-correction", max_length = 1024)
-
 grammar = Blueprint('grammar' ,__name__, url_prefix='/grammar')
 
+# 문법 검사기 모델 해체하는 함수
 def correct_grammar(sentence):
     inputs = tokenizer.encode(sentence, max_length= 1024, truncation=False, return_tensors="pt") # sentence라는 input이 들어오면 토크나이징 후 inputs에 바인딩
     outputs = model.generate(inputs, max_length= 1024) # 디코딩
     corrected_sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return corrected_sentence
-
+# 태그 생성 모델 해체하는 함수
 def generate_tags(sentence):
     inputs = tokenizer2(sentence, max_length=512, return_tensors="pt")
     output = model2.generate(**inputs, num_beams=2, do_sample=True, min_length=10, max_length=32)
@@ -35,6 +36,7 @@ def generate_tags(sentence):
     tags = list(set(decoded_output.strip().split(", ")))
     return tags
 
+# 긴 문장을 4문장마다 끊어주는 함수(1~3문장은 그대로 사용)
 def split_sentence(input):
     inputs = input.split(".")
     linputs = len(inputs)
@@ -66,6 +68,7 @@ def split_sentence(input):
     #   x = x+1
     # return split_input
 
+# 잘라준 문장을 써주는 함수
 def call_models(list):
   correct_sentence = []
   for i in list:
@@ -73,6 +76,7 @@ def call_models(list):
     correct_sentence.append(C_sentence+" ")
   return "".join(correct_sentence)
 
+# 함수 정의
 # Define the function to handle the form submission
 @grammar.route('/correct_grammar', methods=['POST', 'GET'])
 def correct_grammar_api():
@@ -96,7 +100,6 @@ def correct_grammar_api():
         start_time = time.time() # correction_grammar 시작시간 저장
         sentence = request.form['sentence']
         # 문장 분리를 위해 추가함
-
         sentence_splited = split_sentence(sentence)
         # 한 문장 이하의 일기는 문법 체크 자체를 못하는 관계로 수정함
         corrected_sentence = call_models(sentence_splited)
@@ -143,10 +146,9 @@ def correct_grammar_api():
 
 
 
-# 배진혁 파일 시작
+# 배진혁 grammar 파일 시작
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from pybo.models import Sentence
 
 
 engine = create_engine('sqlite:///sentences.db', echo=True)
@@ -211,3 +213,23 @@ def test():
     #
     # return render_template('diary/test.html', sentence=sentence, corrected_sentence = corrected_line, execution_time=execution_time,
     #                        execution_time2=execution_time2)  # 실행시간 추가
+
+
+
+
+
+# # 배진혁 paraphraser 코드 시작
+
+#
+#
+#
+# @grammar.route('/', methods=['POST'])
+# def get_paraphrase():
+#     input_text = request.form['input_text']
+#     inputs = tokenizer3.encode("paraphrase: " + input_text, return_tensors="pt")
+#     outputs = model3.generate(inputs, max_length=1000, do_sample=True, num_return_sequences=2)
+#     paraphrases = [tokenizer3.decode(output, skip_special_tokens=True) for output in outputs]
+#     return render_template('index.html', input_text=input_text, paraphrases=paraphrases)
+#
+# if __name__ == '__main__':
+#     app.run(debug=True)

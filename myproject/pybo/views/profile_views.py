@@ -50,6 +50,9 @@ def Account_settings():
             if "@" not in email:
                 flash("이메일에는 @가 포함되어야 합니다.", category="error")
                 return redirect(request.url)
+            elif not any(ext in email for ext in [".com", ".net", ".co.kr", ".or.kr", ".go.kr", ".kr"]):
+                flash("이메일 주소를 올바른 형식으로 입력해주세요", category="error")
+                return redirect(request.url)
             elif email != user.email:
                 user.email = email
                 db.session.commit()
@@ -69,8 +72,8 @@ def Account_settings():
 
         # 이름 입력 여부 및 유효성 검사
         if name:
-            if len(name) < 1 or len(name) > 4:
-                flash("이름은 1자 이상, 4자 이하로 입력해야 합니다.", category="error")
+            if len(name) < 1 or len(name) > 11:
+                flash("이름은 1자 이상, 10자 이하로 입력해야 합니다.", category="error")
                 return redirect(request.url)
             elif name != user.name:
                 user.name = name
