@@ -71,7 +71,15 @@
   <!-- Template Main JS File -->
   <script src="{{ url_for('static', filename= 'assets/js/main.js') }}"></script>
 
-
+  <!--jquery 추가함-->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      document.getElementById("sidebarclick").click();
+    },16);
+  });
+</script>
 
 <!--자바스크립트 시작-->
 {% block script %}
