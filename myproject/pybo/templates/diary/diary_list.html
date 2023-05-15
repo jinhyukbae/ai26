@@ -23,7 +23,8 @@
       </div>
     </div>
   </div>
-  <br>
+  <br><br>
+
     {% if diary_list %}
     {% for diary in diary_list.items %}
     <a href="{{ url_for('diary.detail', diary_id=diary.id) }}">

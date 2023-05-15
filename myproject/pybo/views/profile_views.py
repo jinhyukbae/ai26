@@ -15,7 +15,6 @@ def My_profile():
     username = g.user.username
     return render_template('profile/My_Profile.html', username=username)
 
-
 @bp.route('/Account_settings/', methods=('GET', 'POST'))
 def Account_settings():
     # 나의 정보 수정 요청 확인
@@ -43,7 +42,6 @@ def Account_settings():
                 db.session.commit()
                 g.user.username = username
                 changed = True
-
 
         # 이메일 입력 여부 및 유효성 검사
         if email:
@@ -92,7 +90,7 @@ def Account_settings():
 
         # 비밀번호 입력 여부 및 유효성 검사
         if password:
-            if len(name) < 4 or len(name) > 12:
+            if len(password) < 4 or len(password) > 12:
                 flash("비밀번호는 4자 이상, 12자 이하로 입력해야 합니다.", category="error")
                 return redirect(request.url)
             elif password != user.password:

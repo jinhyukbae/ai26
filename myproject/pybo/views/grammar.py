@@ -76,57 +76,89 @@ def call_models(list):
     correct_sentence.append(C_sentence+" ")
   return "".join(correct_sentence)
 
+from difflib import ndiff
+import re
+from flask import Markup
+
 # 함수 정의
 # Define the function to handle the form submission
 @grammar.route('/correct_grammar', methods=['POST', 'GET'])
 def correct_grammar_api():
     # 단락별로 저장
-    # 태그 없고, 실행시간만 계산한 코드
-    # if 'review' in request.form:
-    #     sentence = request.form['sentence']
-    #     corrected_sentence = correct_grammar(sentence)
-    #     start_time = time.time()  # 시작 시간 저장
-    #     form = DiaryForm()
-    #     diary = Diary(subject=form.subject.data, content=corrected_sentence,
-    #                   create_date=datetime.now(), user=g.user, tags='')
+    # 비회원이 문법 검토할 때 사용하는 코드
+    if 'review_0' in request.form:
+        sentence = request.form['sentence']
+        corrected_sentence = correct_grammar(sentence)
+        start_time = time.time()  # 시작 시간 저장
+        form = DiaryForm()
+        correct_sentence = correct_grammar(sentence)
+        diff = ndiff(sentence.split(), correct_sentence.split())
+        highlighted_diff = ''
+        for d in diff:
+            if d.startswith('-'):
+                highlighted_diff += f'<span style="color:red">{d[2:]}</span> '
+            elif d.startswith('+'):
+                highlighted_diff += f'<span style="color:blue">{d[2:]}</span> '
+            else:
+                highlighted_diff += f'{d[2:]} '
+        highlighted_diff = re.sub(r'[\+]*[\-]*[\^]*', '', highlighted_diff)
+        highlighted_diff = Markup(highlighted_diff)
+        diary = Diary(subject=form.subject.data, content=corrected_sentence,
+                      create_date=datetime.now(), user=g.user, tags='')
     #     db.session.add(diary)
     #     db.session.commit()
-    #     end_time = time.time() # 종료 시간 저장
-    #     execution_time = end_time - start_time # 실행시간 계산
-    #     return render_template('diary/diary_form.html', execution_time = execution_time) # tags 지움, 실행시간 추가
+        end_time = time.time() # 종료 시간 저장
+        execution_time = end_time - start_time # 실행시간 계산
+        return render_template('diary/diary_form.html', execution_time=execution_time, sentence=sentence,
+                               corrected_sentence=corrected_sentence,
+                               highlighted_diff=highlighted_diff) # tags 지움, 실행시간 추가
 
-    # 태그 있고, 시간 표시 + form_detail에 시간은 저장하지 않는 코드
-    if 'review' in request.form:
-        start_time = time.time() # correction_grammar 시작시간 저장
+    # 회원이 문법 검토할 때 사용하는 코드
+    elif 'review' in request.form:
+        start_time = time.time()  # correction_grammar 시작시간 저장
         sentence = request.form['sentence']
         # 문장 분리를 위해 추가함
         sentence_splited = split_sentence(sentence)
         # 한 문장 이하의 일기는 문법 체크 자체를 못하는 관계로 수정함
         corrected_sentence = call_models(sentence_splited)
+        correct_sentence = correct_grammar(sentence)
+        diff = ndiff(sentence.split(), correct_sentence.split())
+        highlighted_diff = ''
+        for d in diff:
+            if d.startswith('-'):
+                highlighted_diff += f'<span style="color:red">{d[2:]}</span> '
+            elif d.startswith('+'):
+                highlighted_diff += f'<span style="color:blue">{d[2:]}</span> '
+            else:
+                highlighted_diff += f'{d[2:]} '
+        highlighted_diff = re.sub(r'[\+]*[\-]*[\^]*', '', highlighted_diff)
+        highlighted_diff = Markup(highlighted_diff)
 
         # corrected_sentence = correct_grammar(sentence) # 문장 분리하기 전 코드
-        end_time = time.time() # correction_grammar 종료 시간 저장
-        execution_time = end_time - start_time # correction_grammar 실행시간 계산
+        end_time = time.time()  # correction_grammar 종료 시간 저장
+        execution_time = end_time - start_time  # correction_grammar 실행시간 계산
 
-        start_time2 = time.time() # generate_tags 시작시간 저장
+        start_time2 = time.time()  # generate_tags 시작시간 저장
         tags = generate_tags(corrected_sentence)
         tags = tags[:3]
         new_tags = ",".join(tags)
         end_time2 = time.time()  # generate_tags 종료시간 저장
-        execution_time2 = end_time2 - start_time2 # generate_tags 실행시간 계산
+        execution_time2 = end_time2 - start_time2  # generate_tags 실행시간 계산
 
-        start_time3 = time.time() # db.session 시작시간 저장
+        start_time3 = time.time()  # db.session 시작시간 저장
         form = DiaryForm()
 
         diary = Diary(subject=form.subject.data, content=str(corrected_sentence),
                       create_date=datetime.now(), user=g.user, tags=new_tags)
         db.session.add(diary)
         db.session.commit()
-        end_time3 = time.time() # db.session 종료시간 저장
-        execution_time3 = end_time3 - start_time3 # 데이터베이스 저장시간 계산
+        end_time3 = time.time()  # db.session 종료시간 저장
+        execution_time3 = end_time3 - start_time3  # 데이터베이스 저장시간 계산
 
-        return render_template('diary/diary_form.html', execution_time = execution_time, execution_time2 = execution_time2,
-                               execution_time3 = execution_time3, sentence=sentence, corrected_sentence=corrected_sentence, tags=new_tags)
+        return render_template('diary/diary_form.html', execution_time=execution_time, execution_time2=execution_time2,
+                               execution_time3=execution_time3, sentence=sentence,
+                               corrected_sentence=corrected_sentence,
+                               tags=new_tags, highlighted_diff=highlighted_diff)
     # elif 'save' in request.form:
     #     form = DiaryForm()
     #     sentence = request.form.get('sentence')
@@ -139,10 +171,6 @@ def correct_grammar_api():
     #     db.session.add(diary)
     #     db.session.commit()
     #     return redirect(url_for('diary._list'))
-# def sentence_compare():
-#     input = request.form['sentence'].lower()
-#     before = input.split('.')
-#     output = correct_grammar(sentence)
 
 
 

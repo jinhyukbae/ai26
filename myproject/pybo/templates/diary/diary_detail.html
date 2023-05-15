@@ -16,22 +16,19 @@
             <div class="card-body">
               <form action="{{ url_for('diary.get_paraphrase', diary_id=diary.id) }}" method="POST">
                   <textarea name="input_text" id="input_text" readonly style="width: 100%; min-height: 9em;">{{ diary.content }}</textarea>
-                  <button class="btn btn-secondary" type="submit" name="submit" id="submit">이음동의어 확인하기</button>
-                  <button class="btn btn-light" type="button" name="exit" id="exit">닫기</button>
+                  <button class="btn btn-outline-primary" type="submit" name="submit" id="submit">다른 단어로 표현해 본다면?</button>
+                  <button class="btn btn-sm btn-outline-secondary" type="button" name="exit" id="exit">다른 표현 닫기</button>
               </form>
             <!--paraphrasing 기능-->
                 <div class="card-body" id="paraphrase">
                  {% if input_text %}
-                    <h4>▶  Paraphrase 기능</h4>
-                    <h6 class="border-center py-2">  비슷하지만 다른 표현을 알아볼까요?</h6>
+                    <h4>비슷한 뜻, 다른 단어.</h4>
+
                   <ul>
                     {% for paraphrase in paraphrases %}
                       <li>{{ paraphrase }}</li>
                     {% endfor %}
                   </ul>
-                    <h6 class="py-2">Paraphrase 모델 수행 시간
-                    <input type="text" value="{{ execution_time }}">
-                    </h6>
                 {% endif %}
                 </div>
                 <div class="d-flex justify-content-end">
@@ -48,14 +45,14 @@
                 </div>
                 <!--일기 수정기능-->
                <div class="my-3">
-                 <a href="javascript:void(0)" class="recommend btn btn-sm btn-outline-secondary"
+                 <a href="javascript:void(0)" class="recommend btn btn-sm btn-outline-primary"
                     data-uri="{{ url_for('diary.vote', diary_id=diary.id) }}">
                     <i class="bi bi-heart"></i>
                  </a>
                  {% if g.user == diary.user %}
                  <a href="{{ url_for('diary.modify', diary_id=diary.id) }}"
-                 class="btn btn-sm btn-outline-secondary">수정</a>
-                 <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary"
+                 class="btn btn-sm btn-outline-primary">수정</a>
+                 <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-danger"
                     data-uri="{{ url_for('diary.delete', diary_id=diary.id) }}">삭제</a>
                  {% endif %}
               </div>
@@ -105,11 +102,11 @@
                      {% endif %}
                       {% if g.user == answer.user %}
                       <a href="{{ url_for('answer.modify', answer_id = answer.id) }}"
-                      class = "btn btn-sm btn-outline-secondary">수정</a>
+                      class = "btn btn-primary">수정</a>
                       <a href="#" class="delete btn btn-sm btn-outline-secondary "
                       data-uri="{{ url_for('answer.delete', answer_id=answer.id) }}">삭제</a>
                       {% endif %}
-                  </div><span>좋아요 {{ answer.voter|length }}개</span>
+                  </div><span>좋아요 {{ answer.voter|length }}</span>
                   {% endfor %}
                   <br>
               </div>
@@ -134,10 +131,10 @@
         <div class="card my-3">
           <div class="card-body">
             <div class="mb-3">
-                <textarea name="content" id="content" cols="165%" rows="3" placeholder="댓글 달기"></textarea>
+                <textarea name="content" id="content" cols="130rem" rows="3" placeholder="댓글 내용을 입력해 주세요. 바른말 고운말!"></textarea>
             </div>
               {% if g.user %}
-                <input type="submit" value="등록">
+                <input type="submit" value="등록" class="btn btn-outline-primary">
               {% else %}
               {% endif %}
         </form>

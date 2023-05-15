@@ -74,28 +74,28 @@ from flask_dance.contrib.google import make_google_blueprint, google
 # google_bp = make_google_blueprint(client_id="136279422951-4nr61veh2kajbg1tcqaggnc7uqh1hl38.apps.googleusercontent.com",
 #                                    client_secret="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",
 #                                    scope=["profile", "email"])
-from flask_dance.consumer import OAuth2ConsumerBlueprint
-google_bp = OAuth2ConsumerBlueprint("google", __name__,
-                                        client_id="136279422951-4nr61veh2kajbg1tcqaggnc7uqh1hl38.apps.googleusercontent.com",
-                                        client_secret="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",
-                                        scope=["profile", "email"],
-                                        redirect_uri="http://127.0.0.1:5000/auth/google/login/callback")
-
-
-app = Flask(__name__)
-app.secret_key = "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"
-app.register_blueprint(google_bp, url_prefix="/auth")
-
-@google_bp.route("/google/login/callback")
-def googlelogin():
-    if not google.authorized:
-        return redirect(url_for("google.googlelogin"))
-    resp = google.get("/oauth2/v2/userinfo")
-    assert resp.ok, resp.text
-    email = resp.json()["email"]
-    # 로그인 처리 로직 구현
-    return redirect(url_for("main.index"))
-
-# 구글 로그인
-if __name__ == "__main__":
-    app.run(debug=True)
+# from flask_dance.consumer import OAuth2ConsumerBlueprint
+# google_bp = OAuth2ConsumerBlueprint("google", __name__,
+#                                         client_id="136279422951-4nr61veh2kajbg1tcqaggnc7uqh1hl38.apps.googleusercontent.com",
+#                                         client_secret="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",
+#                                         scope=["profile", "email"],
+#                                         redirect_uri="http://localhost:5000/auth/login/")
+#
+#
+# app = Flask(__name__)
+# app.secret_key = "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"
+# app.register_blueprint(google_bp, url_prefix="/auth")
+# #
+# @google_bp.route("/login/")
+# def login():
+#     if not google.authorized:
+#         return redirect(url_for("google.login"))
+#     resp = google.get("/oauth2/v2/userinfo")
+#     assert resp.ok, resp.text
+#     email = resp.json()["email"]
+#     # 로그인 처리 로직 구현
+#     return redirect(url_for("main.index"))
+#
+# # 구글 로그인
+# if __name__ == "__main__":
+#     app.run(debug=True)
