@@ -73,4 +73,6 @@ lightsail 4GB(20$ 버전)으로 사용 시도
 
 ![image](https://github.com/ChaeWonIm0/englishdiary/assets/114221089/8d4ff3bc-9763-4983-ab46-6695aec70af2)
 
+### config.py를 config 폴더로 교체
+### __init__.py 코드 수정
 #### EWS_diary 초기버전 서버 환경 가능
