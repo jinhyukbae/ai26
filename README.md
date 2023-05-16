@@ -1,4 +1,4 @@
-# ai26 Final Project
+# AI_26th PlayData Academy Final Project
 
 ### This Project was made by Flask API
 
