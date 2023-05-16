@@ -22,7 +22,7 @@ Unable to accept Flask
 ### "killed"
 ![image](https://user-images.githubusercontent.com/114221089/236110364-b4756e50-4b26-488d-a248-d4748725e582.png)
 
-### cEven with an Ubuntu that has twice the CPU, it stops for 20 minutes
+### Even with an Ubuntu that has twice the CPU, it stops for 20 minutes
 ![image](https://user-images.githubusercontent.com/114221089/236158068-80e9da2e-8a43-4339-a07a-6c825343c69e.png)
 
 
