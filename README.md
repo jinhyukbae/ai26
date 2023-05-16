@@ -1,4 +1,4 @@
-# AI_26th PlayData Academy Final Project
+# AI_26th PlAYDATA Bootcamp Final Project
 
 ### This Project was made by Flask API
 
