@@ -86,7 +86,6 @@ def get_paraphrase(diary_id):
         end_time = time.time()  # parrot 종료 시간 저장
         execution_time = end_time - start_time  # parrot 실행시간 계산
         return render_template('diary/diary_detail.html', input_text=input_text, paraphrases=paraphrases, diary=diary, form=form, execution_time=execution_time)
-
     return render_template('diary/diary_detail.html', diary=diary, form=form)
 
 @bp.route('/instruction/')

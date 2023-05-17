@@ -73,7 +73,7 @@ h6 {
 
 .index_pagetitle h1 {
   font-size: 100px;
-  margin-top : 10%;
+  margin-top : 6.5%;
 
   font-weight: 600;
   color: #00294d;
@@ -255,7 +255,7 @@ h6 {
 
 .sharedcard-pagetitle h1 {
   font-size: 40px;
-  margin: 30px 0 20px 0;
+  margin: 30px 0 0 0;
   font-weight: 600;
   color: #00294d;
   text-align: center;
@@ -266,6 +266,10 @@ h6 {
   font-weight: 600;
   color: #00294d;
   padding: 10px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  overflow: hidden; /* 넘친 내용 숨김 */
+  text-overflow: ellipsis; /* 넘친 내용을 ...으로 표시 */
+  max-width: 20ch; /* 최대 글자수 지정 */
 }
 
 
@@ -277,7 +281,7 @@ h6 {
   white-space: nowrap; /* 줄바꿈 방지 */
   overflow: hidden; /* 넘친 내용 숨김 */
   text-overflow: ellipsis; /* 넘친 내용을 ...으로 표시 */
-  max-width: 25ch; /* 최대 글자수 지정 */
+  max-width: 20ch; /* 최대 글자수 지정 */
 }
 
 
@@ -297,7 +301,7 @@ h6 {
   flex-direction: row; /* 가로 방향으로 정렬 */
   flex-wrap: wrap; /* 너비가 넘칠 경우 자동으로 다음 줄로 이동 */
   justify-content : center;
-  padding : 110px 110px 90px 110px
+  padding : 30px 110px 90px 110px
 }
 
 .diary-list a{
