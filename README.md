@@ -101,5 +101,7 @@ Attempt to use Lightsail 4GB ($20 version)
 #### EWS_diary initial version server environment available
 
 #### EWS_diary 230518_Mobile UI confirm
+
+- Samsung Galaxy Note_20
 ![image](https://github.com/jinhyukbae/ai26/assets/114221089/2e7654da-8cf5-465f-80e6-c25e851072d5)
 
