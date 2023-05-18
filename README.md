@@ -97,5 +97,10 @@ Attempt to use Lightsail 4GB ($20 version)
 ![image](https://github.com/ChaeWonIm0/englishdiary/assets/114221089/8d4ff3bc-9763-4983-ab46-6695aec70af2)
 
 ### Change : config.py to config directory
-### __init__.py code modify
+### "__init__.py" code modify
 #### EWS_diary initial version server environment available
+
+#### EWS_diary 230518_Mobile UI confirm
+(Galaxy Note_20)
+![image](https://github.com/jinhyukbae/ai26/assets/114221089/54b7ae1d-a77e-46c1-b7ff-7ac5d2cdddef)
+![image](https://github.com/jinhyukbae/ai26/assets/114221089/fa995dcc-589e-415a-a50d-e6786ab26260)
