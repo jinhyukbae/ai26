@@ -5,13 +5,13 @@
 #### 230518_ENVIROMENT SETTING
 
 1. Install this git
-- git clone
+(git clone)
 
-2. use venvs
+2. use python venvs
 - C:\venvs
 - C:\venvs> python -m venv myproject
 
-3. put it cmd
+3. put it in myproject.cmd and activate
 --------------------------
 - @echo off
 - cd C:\ai26\myproject
