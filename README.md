@@ -1,5 +1,27 @@
 # AI_26th PlAYDATA Bootcamp Final Project
 
+### 230518_ENVIROMENT SETTING
+
+1. Install this 
+- git clone
+
+2. use venvs
+- C:\venvs
+- C:\venvs> python -m venv myproject
+
+3. put it cmd
+--------------------------
+@echo off
+cd C:\ai26\myproject
+set FLASK_APP=pybo
+set FLASK_DEBUG=true
+set APP_CONFIG_FILE=C:\ai26\myproject\config\development.py
+C:\venvs\myproject\Scripts\activate
+---------------------------
+
+4. that's it! have a nice day!
+
+
 ### This Project was made by Flask API
 
 ##### 2023-04-14 Added a Flask file that includes features like diary writing, notices, public diary, and login/sign-up (Chaewon)
