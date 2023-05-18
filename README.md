@@ -1,8 +1,10 @@
 # AI_26th PlAYDATA Bootcamp Final Project
 
-### 230518_ENVIROMENT SETTING
 
-1. Install this 
+
+#### 230518_ENVIROMENT SETTING
+
+1. Install this git
 - git clone
 
 2. use venvs
@@ -11,12 +13,12 @@
 
 3. put it cmd
 --------------------------
-@echo off
-cd C:\ai26\myproject
-set FLASK_APP=pybo
-set FLASK_DEBUG=true
-set APP_CONFIG_FILE=C:\ai26\myproject\config\development.py
-C:\venvs\myproject\Scripts\activate
+- @echo off
+- cd C:\ai26\myproject
+- set FLASK_APP=pybo
+- set FLASK_DEBUG=true
+- set APP_CONFIG_FILE=C:\ai26\myproject\config\development.py
+- C:\venvs\myproject\Scripts\activate
 ---------------------------
 
 4. that's it! have a nice day!
